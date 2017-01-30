@@ -1,5 +1,5 @@
 # Group Project
-
+L4/5 group 5- John Dorman, Miruna Rosca, Jamie Gostling, Darren Wright
 This is the repository for your group project, keep it neat and well organised with sensible folder structures.
 
 There is **no** need to create archived builds of your project or to keep any old files - everything is automatically archived for you.
