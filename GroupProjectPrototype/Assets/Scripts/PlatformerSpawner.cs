@@ -5,13 +5,13 @@ using UnityEngine;
 public class PlatformerSpawner : MonoBehaviour {
 
     public GameObject platformPrefab;
-    Vector3 location;
+    public Vector3 location;
     public float waitTime;
     bool canSpawn;
 
     void Start()
     {
-        location = new Vector3(-7.0f, 20.0f, 0.0f);
+        //location = new Vector3(-7.0f, 20.0f, 0.0f);
         canSpawn = true;
         spawnPlat();
     }
@@ -36,7 +36,7 @@ public class PlatformerSpawner : MonoBehaviour {
     void spawnPlat()
     {
         Vector3 spawnPos = location;
-        spawnPos.x = Random.Range(-7.25f, 3.25f);
+        spawnPos.x = Random.Range(location.x, location.x+5.00f);
         Instantiate(platformPrefab, spawnPos, transform.rotation);
     }
 }

@@ -6,14 +6,22 @@ public class MovementScript : MonoBehaviour
     //Variables
     public float speed = 6.0F;
     public float jumpSpeed = 8.0F;
+    public float platformSpeed = -1.0f;
     public float gravity = 20.0F;
     private Vector3 moveDirection = Vector3.zero;
 
+    private CharacterController controller;
+
+    void Start()
+    {
+        controller = GetComponent<CharacterController>();
+    }
+
     void Update()
     {
-        CharacterController controller = GetComponent<CharacterController>();
+
         // is the controller on the ground?
-        
+
         if (controller.isGrounded)
         {
             //Feed moveDirection with input.
@@ -23,9 +31,15 @@ public class MovementScript : MonoBehaviour
             moveDirection *= speed;
             //Jumping
             if (Input.GetButton("Jump"))
+            {
                 moveDirection.y = jumpSpeed;
+            } else
+            {
+                moveDirection.y = platformSpeed;
+            }
 
         }
+
         moveDirection.x = Input.GetAxis("Horizontal") * speed;
         //Applying gravity to the controller
         moveDirection.y -= gravity * Time.deltaTime;
@@ -38,10 +52,6 @@ public class MovementScript : MonoBehaviour
             Vector3 newPosition = transform.position;
             newPosition.z = 0;
             transform.position = newPosition;
-           // moveDirection.x = 0;
-           // moveDirection.y = 0;
         }
-
-        
     }
 }

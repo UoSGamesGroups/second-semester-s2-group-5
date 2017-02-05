@@ -14,9 +14,11 @@ public class PlatformScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        GetComponent<Rigidbody>().velocity = new Vector3(0, -1.0f);
-
-        if(transform.position.y < -10.0f)
+        //GetComponent<Rigidbody>().velocity = new Vector3(0, -1.0f);
+        Vector3 pos = GetComponent<Transform>().position;
+        pos.y = pos.y - 0.01f;
+        transform.position = pos;
+        if (transform.position.y < -10.0f)
         {
             Destroy(this.gameObject);
         }
