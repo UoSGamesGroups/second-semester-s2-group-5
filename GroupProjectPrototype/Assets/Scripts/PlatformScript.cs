@@ -4,13 +4,6 @@ using UnityEngine;
 
 public class PlatformScript : MonoBehaviour
 {
-
-    // Use this for initialization
-    void Start()
-    {
-        //GetComponent<Rigidbody>().AddForce(0, -300, 0);
-    }
-
     // Update is called once per frame
     void Update()
     {
