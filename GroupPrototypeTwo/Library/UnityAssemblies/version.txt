@@ -1,5 +1,5 @@
 5.5.0f3:2.3.0.0
-StandaloneWindows
+Android
 E:/Apps/Editor/Data/Managed/UnityEngine.dll
 E:/Apps/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll
 E:/Apps/Editor/Data/UnityExtensions/Unity/Networking/UnityEngine.Networking.dll
@@ -8,3 +8,5 @@ E:/Apps/Editor/Data/UnityExtensions/Unity/UnityAnalytics/UnityEngine.Analytics.d
 E:/Apps/Editor/Data/UnityExtensions/Unity/UnityHoloLens/RuntimeEditor/UnityEngine.HoloLens.dll
 E:/Apps/Editor/Data/UnityExtensions/Unity/UnityVR/RuntimeEditor/UnityEngine.VR.dll
 E:/Apps/Editor/Data/Managed/UnityEditor.dll
+E:/Apps/Editor/Data/PlaybackEngines/iOSSupport/UnityEditor.iOS.Extensions.Xcode.dll
+E:/Apps/Editor/Data/PlaybackEngines/iOSSupport/UnityEditor.iOS.Extensions.Common.dll
