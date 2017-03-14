@@ -8,26 +8,27 @@ public class PlayerScript : MonoBehaviour {
     public GameObject levelController;
     public GameObject scorePrefab;
 
-    Vector3 mMouseDownPos;
-    Vector3 mMouseUpPos;
-    Rigidbody rigidbody;
+    private Vector3 mMouseDownPos;
+    private Vector3 mMouseUpPos;
+    private Rigidbody rigidbody;
     bool fired;
-    bool moving;
+    private bool mouseDown;
 
     public float speed = .1f;
-    public float dragScale = 1.0f;
+    public float playerMovementScale = 1.0f;
+    public float gravScale = 1.0f;
 
     public GameObject TrajectoryPointPrefeb;
-    GameObject[] tPoints;
+    private GameObject[] tPoints;
     public int numOfTrajectoryPoints = 10;
-    public bool mouseDown;
+
+    public bool debugMode = false;
 
 
     // Use this for initialization
     void Start () {
         rigidbody = GetComponent<Rigidbody>();
         fired = false;
-        moving = false;
         mouseDown = false;
 
         tPoints = new GameObject[numOfTrajectoryPoints];
@@ -43,27 +44,7 @@ public class PlayerScript : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if (fired)
-        {
-            StartCoroutine(isMoving());
-        }
-
-        if (fired && !moving)
-        {
-            levelController.GetComponent<LevelController>().SpawnPlayer(player);
-            GameObject scoreCrate = Instantiate(scorePrefab, transform.position, transform.rotation);
-            scoreCrate.GetComponent<CollisionScript>().hit = player;
-            scoreCrate.GetComponent<Renderer>().material = GetComponent<Renderer>().material;
-            Destroy(this.gameObject);
-        }
-
-        if (this.transform.position.y < -10)
-        {
-            Destroy(this.gameObject);
-            levelController.GetComponent<LevelController>().SpawnPlayer(player);
-        }
-
-        if (mouseDown)
+        if (mouseDown && !fired)
         {
             Vector2 force = GetForceFrom(transform.position, Camera.main.ScreenToWorldPoint(Input.mousePosition));
             float angle = Mathf.Atan2(force.y, force.x) * Mathf.Rad2Deg;
@@ -74,7 +55,7 @@ public class PlayerScript : MonoBehaviour {
 
     private Vector2 GetForceFrom(Vector3 fromPos, Vector3 toPos)
     {
-        return (new Vector2(fromPos.x, fromPos.y) - new Vector2(toPos.x, toPos.y)) * 1.5f  ;
+        return (new Vector2(fromPos.x, fromPos.y) - new Vector2(toPos.x, toPos.y)) * (playerMovementScale-rigidbody.drag);
     }
 
     void OnMouseDown()
@@ -98,22 +79,18 @@ public class PlayerScript : MonoBehaviour {
             mMouseUpPos = Input.mousePosition;
             mMouseUpPos.z = 0;
             Vector3 direction = mMouseDownPos - mMouseUpPos;
-            float magnitude = direction.magnitude * dragScale;
+            float magnitude = direction.magnitude * playerMovementScale;
             direction.Normalize();
-            float moveSpeed = Mathf.Min(speed, magnitude);
+            //float moveSpeed = Mathf.Min(speed, magnitude);
 
             rigidbody.AddForce(direction * magnitude);
-            moving = true;
             fired = true;
-            clearTrajectoryPoints();
-        }
-    }
-
-    void OnCollisionEnter(Collision col)
-    {
-        if (fired)
-        {
-
+            if (!debugMode)
+            {
+                clearTrajectoryPoints();
+            }
+            StartCoroutine(levelController.GetComponent<LevelController>().spawnAfter(4.0f));
+            StartCoroutine(changeObject(4.0f));
         }
     }
 
@@ -129,10 +106,10 @@ public class PlayerScript : MonoBehaviour {
         for (int i = 0; i < numOfTrajectoryPoints; i++)
         {
             float dx = (velocity-(rigidbody.drag * gameTime)) * gameTime * Mathf.Cos(angle * Mathf.Deg2Rad);
-            float dy = velocity * gameTime * Mathf.Sin(angle * Mathf.Deg2Rad) - (Physics.gravity.magnitude * gameTime * gameTime / 2.0f);
+            float dy = velocity * gameTime * Mathf.Sin(angle * Mathf.Deg2Rad) - ((Physics.gravity.magnitude* gravScale) * gameTime * gameTime / 2.0f);
             Vector3 pos = new Vector3(pStartPosition.x + dx, pStartPosition.y + dy, 2);
             tPoints[i].transform.position = pos;
-            tPoints[i].transform.eulerAngles = new Vector3(0, 0, Mathf.Atan2(pVelocity.y - (Physics.gravity.magnitude) * gameTime, pVelocity.x) * Mathf.Rad2Deg);
+            tPoints[i].transform.eulerAngles = new Vector3(0, 0, Mathf.Atan2(pVelocity.y - (Physics.gravity.magnitude * gravScale) * gameTime, pVelocity.x) * Mathf.Rad2Deg);
             tPoints[i].GetComponent<Renderer>().enabled = true;
             gameTime += 0.1f;
         }
@@ -146,15 +123,13 @@ public class PlayerScript : MonoBehaviour {
         }
     }
 
-    IEnumerator isMoving()
+    IEnumerator changeObject(float waitSeconds)
     {
-        Vector3 sek0pos = transform.position;
-        yield return new WaitForSeconds(1.0f);
-        Vector3 sek1pos = transform.position;
-        
-        if(sek0pos == sek1pos)
-        {
-            moving = false;
-        }
+        yield return new WaitForSeconds(waitSeconds);
+        GameObject scoreCrate = Instantiate(scorePrefab, transform.position, transform.rotation);
+        scoreCrate.GetComponent<CollisionScript>().hit = player;
+        scoreCrate.GetComponent<Renderer>().material = GetComponent<Renderer>().material;
+        scoreCrate.GetComponent<Rigidbody>().velocity = GetComponent<Rigidbody>().velocity;
+        Destroy(this.gameObject);
     }
 }
