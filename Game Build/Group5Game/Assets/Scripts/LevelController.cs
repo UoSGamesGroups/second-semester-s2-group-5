@@ -16,6 +16,7 @@ public class LevelController : MonoBehaviour {
 
     public Text TextPlayerOne;
     public Text TextPlayerTwo;
+    public Text TextRound;
 
     public float roundTime;
     private bool checkScore = true;
@@ -26,7 +27,10 @@ public class LevelController : MonoBehaviour {
 
     public GameController gameController;
     public float round = 0;
-    public float totalsRounds = 10;
+    public float totalsRounds = 3;
+
+    private int playerOneMoves;
+    private int playerTwoMoves;
 
     // Use this for initialization
     void Start () {
@@ -34,9 +38,10 @@ public class LevelController : MonoBehaviour {
         scorePlayerOne = 0;
         scorePlayerTwo = 0;
         scoreCubes=  GameObject.FindGameObjectsWithTag("Score");
-        //currentPlayer = 1;
+        playerOneMoves = 0;
+        playerTwoMoves = 0;
 
-        StartCoroutine(spawnAfter(1.0f));
+        StartCoroutine(spawnAfter(0.25f));
     }
 	
 	// Update is called once per frame
@@ -46,13 +51,11 @@ public class LevelController : MonoBehaviour {
            StartCoroutine(updateScore(scoreUpdate));
            checkScore = false;
         }
-
-        levelCheck();
     }
 
     void levelCheck()
     {
-        if (round >= totalsRounds)
+        if (round >= (totalsRounds-1))
         {
             gameController.scores(scorePlayerOne, scorePlayerTwo);
             gameController.endLevel();
@@ -74,34 +77,42 @@ public class LevelController : MonoBehaviour {
     {
         for(int i = 0; i < scoreCubes.Length; i++)
         {
-            scoreCubes[i].GetComponent<CollisionScript>().changed = false;
+            scoreCubes[i].GetComponent<CollisionScript>().changeThisRound = false;
         }
     }
 
     // Coroutine to spawn player after n (roundTime) seconds
     public IEnumerator spawnAfter(float waitSeconds)
-    { 
+    {
         yield return new WaitForSeconds(waitSeconds);
+        updateScoreCubes();
 
+        //Will only change level if both players have moved equal times
+        if (playerOneMoves == playerTwoMoves)
+            levelCheck();
+        
         switch (currentPlayer)
         {
             case 1:
                 //spawn player2;
                 Instantiate(playerTwo, spawnLocation, playerTwo.transform.rotation);
                 currentPlayer = playerTwo.GetComponent<PlayerScript>().player;
+                playerTwoMoves++;
                 break;
             case 2:
                 //spawn player1;
                 Instantiate(playerOne, spawnLocation, playerOne.transform.rotation);
                 currentPlayer = playerOne.GetComponent<PlayerScript>().player;
+                playerOneMoves++;
                 break;
             default:
-                Debug.Log("Player Id Error");
+                Debug.Log("spawnAfter: Player Id Error");
                 break;
         }
-        updateScoreCubes();
+        //Current Round is the highest of the player moves
+        round = Mathf.Max(playerOneMoves, playerTwoMoves);
+        TextRound.text = round + "";
         resetTag();
-        round += 0.5f;
     }
 
     public void addScore(int player, int amount)
@@ -117,7 +128,7 @@ public class LevelController : MonoBehaviour {
                 scorePlayerTwo += amount;
                 break;
             default:
-                Debug.Log("Player Id Error");
+                Debug.Log("addScore: Player Id Error");
                 break;
         }
         TextPlayerOne.text = scorePlayerOne.ToString();
@@ -127,20 +138,6 @@ public class LevelController : MonoBehaviour {
     // Coroutine to check score every n (scoreUpdate) seconds
     IEnumerator updateScore(float scoreUpdate)
     {
-        /*scorePlayerTwo = 0;
-        scorePlayerOne = 0;
-
-        for (int i = 0; i < scoreCubes.Length; i++)
-        {
-            if(scoreCubes[i].GetComponent<CollisionScript>().hit == 1)
-            {
-                scorePlayerOne++;
-            } else if(scoreCubes[i].GetComponent<CollisionScript>().hit == 2)
-            {
-                scorePlayerTwo++;
-            }
-        }
-        */
         TextPlayerOne.text = scorePlayerOne.ToString();
         TextPlayerTwo.text = scorePlayerTwo.ToString();
         Debug.Log("score updated");

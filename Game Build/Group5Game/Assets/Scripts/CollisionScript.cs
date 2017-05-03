@@ -4,27 +4,20 @@ using UnityEngine;
 
 public class CollisionScript : MonoBehaviour {
 
-    //Renderer renderer;
     SpriteRenderer sr;
     public Sprite currSprite;
     BoxCollider box;
 
-    public int hit;
-    public bool changed;
+    public int playerNum;
+    public bool changeThisRound;
 
     // Use this for initialization
     void Start () {
-        //renderer = GetComponent<Renderer>();
         sr = GetComponent<SpriteRenderer>();
         currSprite = sr.sprite;
         box = GetComponent<BoxCollider>();
-        changed = false;
+        changeThisRound = false;
     }
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
 
     void OnCollisionEnter(Collision col)
     {
@@ -33,18 +26,40 @@ public class CollisionScript : MonoBehaviour {
             onChange(col.gameObject.GetComponent<SpriteRenderer>().sprite, col.gameObject.GetComponent<PlayerScript>().player);
         }
 
-        if (col.gameObject.tag.Equals("Score") && !changed)
+        if (col.gameObject.tag.Equals("Score"))
         {
-            onChange(col.gameObject.GetComponent<SpriteRenderer>().sprite, col.gameObject.GetComponent<CollisionScript>().hit);
+            if (!changeThisRound && col.gameObject.GetComponent<CollisionScript>().changeThisRound)
+            {
+                onChange(col.gameObject.GetComponent<SpriteRenderer>().sprite, col.gameObject.GetComponent<CollisionScript>().playerNum);
+            }
         }
     }
 
     public void onChange(Sprite newSprite, int newPlayer)
     {
         sr.sprite = newSprite;
-        hit = newPlayer;
-        changed = true;
+        playerNum = newPlayer;
+        changeThisRound = true;
         ChangeNeighbors();
+    }
+
+    void OnTriggerStay(Collider col)
+    {
+        if (col.gameObject.tag == "MovingPlatform")
+        {
+            transform.parent = col.transform;
+            Debug.Log("yes");
+        }
+        Debug.Log("yes");
+    }
+
+
+    void OnTriggerExit(Collider col)
+    {
+        if (col.gameObject.tag == "MovingPlatform")
+        {
+            transform.parent = null;
+        }
     }
 
     public void ChangeNeighbors()
@@ -54,11 +69,11 @@ public class CollisionScript : MonoBehaviour {
         {
             if (cols[i].gameObject.tag.Equals("Score"))
             {
-                cols[i].gameObject.GetComponent<CollisionScript>().changed = true;
+                cols[i].gameObject.GetComponent<CollisionScript>().changeThisRound = true;
 
-                if (cols[i].gameObject.GetComponent<CollisionScript>().hit != hit)
+                if (cols[i].gameObject.GetComponent<CollisionScript>().playerNum != playerNum)
                 {
-                    cols[i].gameObject.GetComponent<CollisionScript>().onChange(GetComponent<SpriteRenderer>().sprite,hit);
+                    cols[i].gameObject.GetComponent<CollisionScript>().onChange(GetComponent<SpriteRenderer>().sprite,playerNum);
                 }
             }
         }

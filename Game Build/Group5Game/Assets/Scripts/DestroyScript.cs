@@ -19,7 +19,7 @@ public class DestroyScript : MonoBehaviour {
 
         if (GetComponent<CollisionScript>() != null)
         {
-            hit = GetComponent<CollisionScript>().hit;
+            hit = GetComponent<CollisionScript>().playerNum;
         } else if(GetComponent<PlayerScript>() != null){
             hit = GetComponent<PlayerScript>().player;
         }
@@ -68,7 +68,7 @@ public class DestroyScript : MonoBehaviour {
     {
         if (GetComponent<CollisionScript>() != null)
         {
-            return GetComponent<CollisionScript>().hit;
+            return GetComponent<CollisionScript>().playerNum;
         }
         else
         {

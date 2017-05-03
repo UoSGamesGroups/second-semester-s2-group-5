@@ -65,7 +65,7 @@ BoxCollider:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1278415228569982}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 8123d517ff89e3b4398fbb4c0aee78d8, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
@@ -84,14 +84,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: 2
   levelController: {fileID: 0}
-  scorePrefab: {fileID: 1680115091754000, guid: 3ee43f4bd6f6e544f89973b9fc10019d,
+  scorePrefab: {fileID: 1961351113844082, guid: e32ffb390e42b244e98140a8f4b9fbfb,
     type: 2}
   speed: 2500
-  playerMovementScale: 16
+  playerMovementScale: 30
   TrajectoryPointPrefeb: {fileID: 1557025854977308, guid: 22b95f4e4434b8e49a03a3589b05df40,
     type: 2}
   numOfTrajectoryPoints: 10
-  debugMode: 0
   petal: {fileID: 1892899850414884, guid: 83eaf468b893e5e4bb7b75d51395d142, type: 2}
   petalSpawn: 0
 --- !u!114 &114270269004797888
